@@ -35,3 +35,16 @@ Stok is a project for managing small store's stock.
 > <p align="left"> <a href="https://heroku.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/heroku/heroku-icon.svg" alt="heroku" width="40" height="40"/> </a> </p>
 > <p <a href="https://postman.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="postman" width="40" height="40"/> </a> </p>
 > <p <a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> </a> </p>
+
+## Contributors
+This project exists thank to te people who contribute. <li class="mb-2 d-flex" data-test-selector="grid-mode-element">
+      <a href="https://github.com/gustavocn121" class="mr-2" data-hovercard-type="user" data-hovercard-url="/users/gustavocn121/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self">
+        <img src="https://avatars.githubusercontent.com/u/69543216?s=64&amp;v=4" alt="@gustavocn121" size="32" height="32" width="32" data-view-component="true" class="avatar circle">
+      </a>
+      <span data-view-component="true" class="flex-self-center min-width-0 css-truncate css-truncate-overflow width-fit flex-auto">
+        <a href="https://github.com/gustavocn121" class="Link--primary no-underline flex-self-center">
+          <strong>gustavocn121</strong>
+        </a>
+</span>    </li>
+      
+      
