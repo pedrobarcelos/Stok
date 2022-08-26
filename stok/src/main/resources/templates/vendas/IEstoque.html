@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Estoque</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="/js/estoque.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"><link rel="stylesheet" type="text/css" href="/css/custom.css">
+</head>
+<body style="background: #11161a;font-family: Roboto Mono, monospace;">
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+    <div class="offcanvas-header">
+        <h2 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Carrinho</h2>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="content-div2" align="center">
+            <div>
+                <label for="precototal">Valor inicial: R$</label>
+                <span id="precototal" th:text="${carrinho.valorTotal}"></span>
+                <p>
+                <label for="descontoAtual">Desconto aplicado:</label>
+                <span id="descontoAtual" th:text="${carrinho.descontoAtual}"></span>%
+                    <br><label for="valordescontado">Valor a pagar:</label>
+                    <span id="valordescontado" th:text="${#numbers.formatCurrency(carrinho.valorDescontado)}"></span></br>
+                </p>
+            </div>
+            <a href="/carrinho/limpar"><button class="btn" style="background: #ff6961; color: black;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Limpar</button></a>
+            <button class="btn" style="background: #d1c748; color: black;" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal3">Desconto</button>
+            <a><button class="btn" style="background: #7ba05b; color: black;" type="button" data-bs-toggle="modal" data-bs-target="#resumovenda">Finalizar</button></a>
+        </div>
+        <div align="center" style="margin-top: 2rem; overflow: auto;" >
+            <th:block th:each="item : ${itens}">
+                <div class="col" style="margin-bottom: 2rem">
+                    <div class="card h-100" style="width: 18rem; card-border-color:#f2a900;">
+                        <!--                    <img th:src="${vantagem.path}" class="card-img-top" alt="imagem">-->
+                        <div class="card-body">
+                            <h5 class="card-title" id="ItemNome" th:value="${item.id}" style="color: f2a900;" th:text="${item.prod.nome}"><strong></strong></h5>
+                            <!--                        <p class="card-text" th:text="${item.descricao}"></p>-->
+                            <label for="qtd">Quantidade:</label>
+                            <span class="card-text" id="qtd" th:text="${item.qtde}"></span>
+                            <label for="tamanho">Tamanho:</label>
+                            <span class="card-text" id="tamanho" th:text="${item.prod.size}"></span>
+                            <label for="preco">Total: R$</label>
+                            <span class="card-text" id="preco" th:text="${item.valorInteiro}"></span>
+                            <p></p>
+                            <form th:action="@{/carrinho/adicionar/{produto_id}(produto_id=${item.prod.code})}" method="POST">
+                                <a id="btnExcluir" th:href="@{/item/excluir/{code}(code=${item.id})}" methods="POST" style="background: #ff6961;" class="btn">Excluir</a>
+                                <button type="submit" th:value="${produto.code}" class="btn btnExcluirProduto" style="background: 	#7ba05b; color: black">+1</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</div>
+<nav class="navbar sticky-top navbar-expand-sm navbar-dark" style="background: #0d1114; display: flex; justify-content: space-between; position: sticky;">
+    <a class="navbar-brand" href="#" onclick="javascript:window.history.back(-1);return false;">
+        <img src="/images/stocklogo.png" alt="Logo" style="width:40px;">
+        <span style="color: white;">Estoque</span>
+    </a>
+    <div align="center">
+        <ul class="nav nav-pills">
+            <li class="nav-item" style="padding-right: 4px;padding-top: 4px;">
+                <button type="button" class="btn" style="background: #03a9f4; color: black;" id="btnAdicionarProduto" data-bs-toggle="modal" data-bs-target="#exampleModal" >Novo Produto</button>
+                <a th:href="@{/vendas/historico}">
+                    <button type="button" class="btn" style="background: #03a9f4; color: black;" >Histórico</button>
+                </a>
+            </li>
+            <li class="nav-item dropdown" style="padding: 4px;">
+                <button type="button" class="btn" data-bs-toggle="dropdown" style="background: #03a9f4;color: black;" href="#" role="button" aria-expanded="false">Filtrar</button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/estoque/filtrar/alfabetico">Nome</a></li>
+                    <li><a class="dropdown-item" href="/estoque/filtrar/preco_decrescente">Maior Preço</a></li>
+                    <li><a class="dropdown-item" href="/estoque/filtrar/preco_crescente">Menor Preço</a></li>
+                    <!--<li><a class="dropdown-item" href="/estoque/filtrar/quantidade_decrescente">Maior Quantidade</a></li>
+                    <li><a class="dropdown-item" href="/estoque/filtrar/quantidade_crescente">Menor Quantidade</a></li>-->
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/estoque">Remover filtro</a></li>
+                </ul>
+            <li class="nav-item" style="padding: 4px; width: auto;">
+                <form id="formPesquisar" class="d-flex">
+                    <input id="inputPesquisar" class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Search">
+                    <button class="btn" style="background: #03a9f4;color: black;"  type="submit">Pesquisar</button>
+                </form>
+            </li>
+            <li class="nav-item" style="padding: 4px; width: auto;">
+                <button class="btn" style="background: #03a9f4; color: black;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Carrinho</button>
+            </li>
+        </ul>
+    </div>
+    <li class="nav-item dropdown" style="padding: 4px;">
+        <a class="navbar-brand" href="#" data-bs-toggle="dropdown">
+            <span style="color: white;">Funcionario</span>
+            <img src="/images/userlogo.jpeg" alt="Logo" style="width:40px;">
+        </a>
+<!--        <button type="button" class="btn" data-bs-toggle="dropdown" style="background: #03a9f4;color: black;" href="#" role="button" aria-expanded="false">Filtrar</button>-->
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/estoque/filtrar/alfabetico">Perfil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/estoque/filtrar/alfabetico">Trocar Filialwe</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a onclick="document.querySelector('#form-login').submit()" class="dropdown-item" href="#">Logout</a></li>
+            <form id="form-login" th:action="@{/logout}" method="post"></form>
+        </ul>
+    </li>
+<!--    <a class="navbar-brand" href="#">-->
+<!--        <span style="color: white;">Funcionario</span>-->
+<!--        <img src="/images/userlogo.jpeg" alt="Logo" style="width:40px;">-->
+<!--    </a>-->
+</nav>
+    <div align="center" class="container container-fluid my-4">
+        <h1 th:if="${estoque.isEmpty()}" style="color: white;" align="center" class="text-center" colspan="3">Estoque vazio! Mãos a obra!</h1>
+        <p align="center">
+            <img th:if="${estoque.isEmpty()}"  align="center" width="auto" src="/images/worker.png">
+        </p>
+
+        <table th:if="${!(estoque.isEmpty())}" class="table-hover datatable table" style="background-color: #11161a; color: white;">
+        <thead>
+        <tr>
+<!--            <th>Code</th>-->
+            <th id="th-nome">Nome</th>
+            <th id="th-preco">Preço</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="produto : ${estoque}">
+            <td class="nome-produto" th:href="@{/produto/{code}(code=${produto.code})}" th:text="${produto.nome}"></td>
+            <td class="nome-produto" th:href="@{/produto/{code}(code=${produto.code})}" th:text="${#numbers.formatCurrency(produto.preco)}"></td>
+            <td >
+
+                <a th:value="${produto.nome}" th:href="@{/estoque/produto/excluir/nome/{nome}(nome=${produto.nome})}" class="btn excl-tooltip" data-bs-toggle="tooltip"  data-bs-placement="top" style="background: #ff6961; color: black;margin-right: 1%">Excluir</a>
+                <button th:value="${produto.nome}" type="button" class="btn btnIncrementarProduto" style="background: #f9a36d; color: black;margin-right: 1%"  data-bs-toggle="modal" data-bs-target="#incrementarModal2">Incrementar</button>
+
+                <a th:value="${produto.nome}" class="excl-tooltip" data-bs-toggle="tooltip"  data-bs-placement="top"><button th:value="${produto.code}" type="button" class="btn btnAlterarProduto" style="background: #d1c748; color: black;margin-right: 1%;" data-bs-toggle="modal" data-bs-target="#incrementarModal">Alterar</button></a>
+<!--                <button th:value="${produto.code}" type="button" class="btn btnExcluirProduto" style="background: 	#7ba05b; color: black;margin-right: 1%"  data-bs-toggle="modal" data-bs-target="#incrementarModal">Vender</button>-->
+                <button th:value="${produto.code}" type="button" class="btn btnNovoTamanhoProduto" style="background: #8eafe7; color: black;" data-bs-toggle="modal" data-bs-target="#exampleModal">Novo Tamanho</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+        <nav aria-label="Page navigation example" th:if="${!(estoque.isEmpty())}" style="margin-bottom: 4%">
+            <ul class="pagination justify-content-end">
+                <li class="page-item">
+                    <a class="page-link">Previous</a>
+                </li>
+                <li class="page-item" ><a class="page-link" href="#">1</a></li>
+                <li class="page-item" ><a class="page-link" href="#">2</a></li>
+                <li class="page-item" ><a class="page-link" href="#">3</a></li>
+                <li class="page-item" >
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoProduto" action="#" th:action="@{/produto/salvar}" th:object="${produto}" method="POST" class="register-form">
+                    <input type="hidden" id="id" th:field="*{code}" />
+                    <div class="mb-3">
+                        <label for="editarProdutoNome">Nome:</label>
+                        <input type="text"  class="form-control" id="editarProdutoNome" th:field="*{nome}" minlength="1" maxlength="50" required placeholder="Nome"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarProdutoPreco">Preço:</label>
+                        <input type="number" class="form-control"th:field="*{preco}" id="editarProdutoPreco" min="0.01" placeholder="Preço" required step="0.01"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarProdutoTamanho">Tamanho:</label>
+                        <input type="number" class="form-control" th:field="*{size}" id="editarProdutoTamanho" placeholder="Tamanho" min="30" required max="50"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarProdutoDesc">Descrição:</label>
+                        <input type="text" class="form-control" th:field="*{descricao}"id="editarProdutoDesc"  minlength="1" maxlength="300" required placeholder="Descricao"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarProdutoQtd">Quantidade:</label>
+                        <input type="number" class="form-control" id="editarProdutoQtd" th:field="*{quantidade}" min="1" required placeholder="Quantidade"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="btnModalCriar" class="btn btn-primary">Criar</button>
+                    </div>
+                </form>
+                </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="incrementarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="incrementarModalLabel">Incrementar produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formModalIncrementar" th:action="@{/produto/salvar}" th:object="${produto}" method="POST" class="register-form">
+                    <input type="hidden" id="code" th:field="*{code}" />
+                    <div class="mb-3" id="divNome">
+                        <label for="campoNomeIncrementar">Nome:</label>
+                        <input type="text" id="campoNomeIncrementar" class="form-control" disabled value="123" minlength="1" maxlength="50" required placeholder="Nome"/>
+                    </div>
+                    <div class="mb-3" id="divPreco">
+                        <label for="campoPrecoIncrementar">Preço:</label>
+                        <input type="number" id="campoPrecoIncrementar" class="form-control"th:field="*{preco}" disabled min="0.01" :placeholder="oi" required step="0.01"/>
+                        <h6 style="color: #ff6961">Observação: Isto alterará todos os produtos com o mesmo nome!</h6>
+                    </div>
+                    <div class="mb-3" id="divTamanho">
+                        <label for="campoTamanhoIncrementar">Tamanho:</label>
+                        <input type="number" id="campoTamanhoIncrementar"  class="form-control" th:field="*{size}" disabled placeholder="${produto.nome}" min="34" required max="50"/>
+                    </div>
+                    <div class="mb-3" id="divDesc">
+                        <label for="campoDescricaoIncrementar">Descrição:</label>
+                        <input type="text" id="campoDescricaoIncrementar" class="form-control" th:field="*{descricao}" disabled minlength="1" maxlength="300" required placeholder="Descricao"/>
+                        <h6 style="color: #ff6961">Observação: Isto alterará todos os produtos com o mesmo nome!</h6>
+                    </div>
+                    <div class="mb-3"id="divQuantidade">
+                        <label for="modalIncrementarQuantidade">Quantidade:</label>
+                        <input type="number" id="modalIncrementarQuantidade" class="form-control" th:field="*{quantidade}" min="1" required placeholder="Quantidade"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button  type="submit" id="btnModalIncrementar" class="btn btn-primary">Criar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="incrementarModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="incrementarModa2lLabel">Incrementar produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formModal2Incrementar" th:action="@{/produto/salvar}" th:object="${produto}" method="POST" class="register-form">
+                    <input type="hidden" th:field="*{code}" />
+                    <div class="mb-3">
+                        <label for="campoNomeIncrementar2">Nome:</label>
+                        <input type="text" id="campoNomeIncrementar2" class="form-control" disabled value="${produto.nome}" minlength="1" maxlength="50" required placeholder="Nome"/>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelect01">Tamanho:</label>
+                        <select class="form-select" id="inputGroupSelect01" th:field="*{size}">
+
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="incrementar-qtd">Quantidade:</label>
+                        <input type="number" id="incrementar-qtd" class="form-control" th:field="*{quantidade}" min="1" required placeholder="Quantidade"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button  type="submit" id="btnModalIncrementar2" class="btn btn-primary">Criar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel3">Desconto na venda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formModal3Desconto" th:action="@{/produto/salvar}"  method="POST" class="register-form">
+                    <div class="mb-3">
+                        <label id="labelvalue" th:value="${limite.descontoMAX}" for="campoDesconto">Desconto:</label>
+                        <input type="number" id="campoDesconto" class="form-control" min="0.00" max="0.0" placeholder="Desconto" required step="0.01"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="resumovenda" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resumoModalLabel3">Resumo da venda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <th:block th:each="item : ${itens}">
+                    <div class="col" style="margin-bottom: 2rem">
+                        <span id="QuantidadeResumo" th:text="${item.qtde}"></span> x
+                        <span id="NomeResumo" th:text="${item.prod.nome}"></span>
+                        Tamanho <span id="TamanhoResumo" th:text="${item.prod.size}"></span>
+                        R$<span id="TotalitemResumo" th:text="${item.valorInteiro}"></span>
+                        <br>----------------------------------------------------</br>
+                    </div>
+                </th:block>
+                Total:<span th:text="${#numbers.formatCurrency(carrinho.valorDescontado)}"></span>
+                <br></br>
+                Desconto:<span th:text="${carrinho.descontoAtual}"></span>%
+                <br></br>
+                Nota de balcão:
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="btnradio1">Emitir</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio2">Não Emitir</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a href="/carrinho/finalizar"><button type="submit" class="btn btn-primary">Confirmar</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark" style="background: #0d1114;text-align: center">
+           <div align="center" style="text-align: center;margin: 0 auto">
+               <a style="text-align: center; align: center" class="navbar-brand" href="#">Copyright &copy; 2022 - All Rights Reserved - Stok</a>
+           </div>
+    </nav>
+</body>
+
+
+</html>

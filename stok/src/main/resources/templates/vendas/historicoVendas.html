@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico de Vendas</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="/js/estoque.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"><link rel="stylesheet" type="text/css" href="/css/custom.css">
+</head>
+<body style="background: #11161a;font-family: Roboto Mono, monospace;">
+<nav class="navbar sticky-top navbar-expand-sm navbar-dark" style="background: #0d1114; display: flex; justify-content: space-between; position: sticky;">
+    <a class="navbar-brand" href="#" onclick="javascript:window.history.back(-1);return false;">
+        <img src="/images/stocklogo.png" alt="Logo" style="width:40px;">
+        <span style="color: white;">Histórico de Vendas</span>
+    </a>
+    <div align="center">
+
+    </div>
+    <li class="nav-item dropdown" style="padding: 4px;">
+        <a class="navbar-brand" href="#" data-bs-toggle="dropdown">
+            <span style="color: white;">Funcionario</span>
+            <img src="/images/userlogo.jpeg" alt="Logo" style="width:40px;">
+        </a>
+
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/estoque/filtrar/alfabetico">Perfil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a onclick="document.querySelector('#form-login').submit()" class="dropdown-item" href="#">Logout</a></li>
+            <form id="form-login" th:action="@{/logout}" method="post"></form>
+        </ul>
+    </li>
+</nav>
+<div align="center" class="container container-fluid my-4">
+    <h1 th:if="${historico.isEmpty()}" style="color: white;" align="center" class="text-center" colspan="3">Histórico vazio! Mãos a obra!</h1>
+    <p align="center">
+        <img th:if="${historico.isEmpty()}"  align="center" width="auto" src="/images/worker.png">
+    </p>
+
+    <table th:if="${!(historico.isEmpty())}" class="table-hover datatable table" style="background-color: #11161a; color: white;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Valor</th>
+            <th>Quantidade de Itens</th>
+            <th>Data</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="venda : ${historico}">
+            <td  th:text="${venda.id}"></td>
+            <td  th:text="${#numbers.formatCurrency(venda.valorTotal)}"></td>
+            <td  th:text="${venda.qtdItens}"></td>
+            <td  th:text="${venda.time}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example" th:if="${!(historico.isEmpty())}" style="margin-bottom: 4%">
+        <ul class="pagination justify-content-end">
+            <li class="page-item">
+                <a class="page-link">Previous</a>
+            </li>
+            <li class="page-item" ><a class="page-link" href="#">1</a></li>
+            <li class="page-item" ><a class="page-link" href="#">2</a></li>
+            <li class="page-item" ><a class="page-link" href="#">3</a></li>
+            <li class="page-item" >
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</body>
+</html>

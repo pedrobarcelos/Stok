@@ -1,0 +1,42 @@
+.table-striped>tbody>tr:nth-child(odd)>td,
+.table-striped>tbody>tr:nth-child(odd)>th {
+    background-color: #11161a; /* Choose your own color here */
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #222b33;
+  color: white;
+}
+
+.nome-produto{
+    cursor:pointer;
+}
+
+.pagination > li > a
+{
+    background-color: #11161a;
+    color: white;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: black;
+    background-color: #03a9f4;
+    border-color: #ddd;
+}
+
+.pagination > .active > a
+{
+    color: white;
+    background-color: #03a9f4; !Important;
+    border: solid 1px #5A4181 !Important;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #03a9f4; !Important;
+    border: solid 1px #5A4181;
+}
