@@ -13,7 +13,7 @@ Stok is a project for managing small store's stock.
  </div>
  
 > It implements the MVC (Modal, View, Controller) architeture; <div align="center">
- <a href="https://twitter.com/ph_barcelos" target="blank"><img src="/Resources/home.gif" alt="ph_barcelos" /></a></p>
+ <a href="https://twitter.com/ph_barcelos" target="blank"><img src="/Resources/mvc.gif" alt="ph_barcelos" /></a></p>
  </div>
  
 > It was developed with Docker, while not hosted at Microsoft Azure; <div align="center">
